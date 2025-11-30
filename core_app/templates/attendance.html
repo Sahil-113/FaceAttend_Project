@@ -1,0 +1,1032 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Attendance - Facial Attendance</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4cc9f0;
+      --light: #f8f9fa;
+      --dark: #121212;
+      --dark-gray: #1e1e1e;
+      --medium-gray: #2d2d2d;
+      --light-gray: #3d3d3d;
+      --success: #4bb543;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      --transition: all .3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      color: var(--light);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Fixed Background Layer */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("{% static 'images/hero_background.jpg' %}") no-repeat center center / cover;
+      z-index: -1;
+      opacity: 1;
+    }
+
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 15px;
+    }
+
+    section {
+      padding: 80px 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-weight: 700;
+      margin-bottom: 1.4em;
+    }
+
+    h1 {
+      font-size: 3.2rem;
+    }
+
+    h2 {
+      font-size: 2.4rem;
+      text-align: center;
+      position: relative;
+    }
+
+    h2::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      border-radius: 2px;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 28px;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      border: 2px solid transparent;
+      transition: var(--transition);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(18, 18, 18, 0.95);
+      box-shadow: var(--shadow);
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo h2 {
+      color: var(--light);
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 25px;
+    }
+
+    nav a {
+      color: var(--light);
+      text-decoration: none;
+      position: relative;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: var(--transition);
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .mobile-menu {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Hero Section (Registration specific) */
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.6);
+      background-size: cover;
+      background-position: center;
+      padding-top: 120px;
+    }
+
+    .hero-content {
+      max-width: 700px;
+      z-index: 2;
+    }
+
+    .hero h1 {
+      font-size: 3.2rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: fadeInUp 1s ease;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+      animation: fadeInUp 1s ease 0.2s both;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      animation: fadeInUp 1s ease 0.4s both;
+    }
+
+    /* attendance section */
+    .attendance-section {
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .registration-section {
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .form-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(27, 26, 26, 0.9);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-header-text {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .form-header-text h2 {
+      margin-bottom: 10px;
+    }
+
+    .form-row {
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--light);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 8px;
+      font-size: 16px;
+      border: 1px solid var(--light-gray);
+      background: var(--dark-gray);
+      color: var(--light);
+      transition: var(--transition);
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.3);
+    }
+
+    .pulse-border {
+      animation: inputPulse 2s infinite;
+    }
+
+    @keyframes inputPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(67, 97, 238, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(67, 97, 238, 0);
+      }
+    }
+
+    .preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-start;
+      border: none;
+    }
+
+    .video-container {
+      position: relative;
+      width: 320px;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0a1929;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .neon-video-border {
+      border: 3px solid #00ffff;
+      border-radius: 12px;
+      box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #00ffff;
+      animation: neonPulse 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes neonPulse {
+      from {
+        box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+      }
+
+      to {
+        box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+      }
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .button-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .btn-neon {
+      background: transparent;
+      color: #00ffff;
+      border: 2px solid #00ffff;
+      box-shadow: 0 0 5px #00ffff, inset 0 0 5px #00ffff;
+      animation: neonPulse 1.5s ease-in-out infinite alternate;
+    }
+
+    .btn-neon:hover {
+      transform: translateY(-3px);
+    }
+
+    /* Profile Graphic Styles */
+    .profile-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .profile-graphic {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+    }
+
+    .profile-icon {
+      font-size: 60px;
+      color: white;
+      z-index: 2;
+    }
+
+    .profile-graphic::before {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      top: -10px;
+      right: -10px;
+    }
+
+    /* Info Cards Section (like Home features) */
+    .info-section {
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .feature-card {
+      background: var(--dark-gray);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+
+    .feature-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      color: white;
+      font-size: 1.6rem;
+    }
+
+    .feature-card h3 {
+      margin-bottom: 10px;
+    }
+
+    /* Footer (same structure as Home) */
+    footer {
+      background: rgba(42, 42, 42, 0.6);
+      padding: 60px 0 30px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-column h3 {
+      color: var(--light);
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: #aaa;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+      padding-left: 5px;
+    }
+
+    .social-links1 {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .social-links1 a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: var(--light-gray);
+      border-radius: 50%;
+      color: var(--light);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .social-links1 a:hover {
+      background: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .copyright {
+      text-align: center;
+      padding-top: 30px;
+      border-top: 1px solid var(--light-gray);
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .floating {
+      animation: float 5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .hero h1 {
+        font-size: 2.7rem;
+      }
+
+      .preview {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .video-container {
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .button-group {
+        width: 100%;
+        max-width: 400px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav ul {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: var(--dark);
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        text-align: center;
+      }
+
+      nav ul.active {
+        display: flex;
+      }
+
+      .mobile-menu {
+        display: block;
+      }
+
+      .hero {
+        padding-top: 100px;
+      }
+
+      .hero h1 {
+        font-size: 2.4rem;
+      }
+
+      .form-container {
+        padding: 25px;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      section {
+        padding: 60px 0;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-user-check" style="font-size:2rem;color:var(--accent);"></i>
+          <h2>FaceAttend</h2>
+        </div>
+
+        <nav>
+          <div class="mobile-menu"><i class="fas fa-bars"></i></div>
+          <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'registration' %}">Registration</a></li>
+            <li><a href="#attendance">Attendance</a></li>
+            <li><a href="/admin/">Admin Login</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section (Registration) -->
+  <section id="home" class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Mark Your Attendance Using Face Recognition</h1>
+        <p>
+          Simply look at the camera, capture your face, and your attendance will be recorded instantly.
+        </p>
+        <div class="hero-buttons">
+          <a href="{% url 'registration' %}" class="btn btn-primary floating">Start Registration</a>
+          <a href="#attendance" class="btn btn-outline floating">Go to Attendance</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Attendance Form-->
+  <!--<section class="form-section">
+    <div class="container">
+      <div class="form-container">
+        <div class="form-header">
+          <h2>Attendance Form</h2>
+          <p>Enter your User ID, capture your face, and submit to mark your attendance</p>
+        </div>
+
+         Profile Graphic -->
+  <!--<div class="profile-container">
+          <div class="profile-graphic">
+            <i class="fas fa-user-clock profile-icon"></i>
+          </div>
+        </div>
+
+        <form id="attendanceForm" onsubmit="event.preventDefault(); submitAttendance('attendanceForm');">
+          {% csrf_token %}
+
+          <label>User ID</label>
+          <input type="text" name="userid" required>
+
+          <div class="preview">
+            <div class="video-container">
+              <video id="attVideo" autoplay muted playsinline></video>
+              <canvas id="attCanvas" style="display:none;"></canvas>
+            </div>
+
+            <div class="button-group">
+              <button type="button" class="btn btn-neon" onclick="startAttCamera('attVideo')">
+                <i class="fas fa-video"></i> Start Camera
+              </button>
+              <button type="button" class="btn btn-primary" onclick="captureAttFrame('attVideo','attCanvas')">
+                <i class="fas fa-camera"></i> Capture Face
+              </button>
+              <button type="submit" class="btn btn-primary floating">
+                <i class="fas fa-paper-plane"></i> Submit Attendance
+              </button>
+            </div>
+          </div>
+
+          <p style="margin-top:15px;text-align:center;">
+            <small>Date & Time will be recorded by server on submission.</small>
+          </p>
+
+        </form>
+      </div> -->
+
+  <!-- Attendance Form Section -->
+  <section id="attendance" class="attendance-section">
+    <div class="container">
+      <div class="form-container">
+        <div class="form-header-text">
+          <h2>Face Attendance Form</h2>
+          <p>Enter your User ID, capture your face, and submit to mark your attendance.</p>
+        </div>
+
+        <!-- Profile Graphic -->
+        <div class="profile-container">
+          <div class="profile-graphic">
+            <i class="fas fa-user-plus profile-icon"></i>
+          </div>
+        </div>
+
+        <form id="registrationForm" onsubmit="event.preventDefault(); submitAttendance('attendanceForm');">
+          {% csrf_token %}
+
+          <div class="form-row">
+            <label>User ID</label>
+            <input type="text" name="userid" required class="pulse-border" />
+          </div>
+
+          <div class="form-row preview">
+            <div class="video-container neon-video-border">
+              <video id="attVideo" autoplay muted playsinline></video>
+              <canvas id="attCanvas" style="display:none;"></canvas>
+            </div>
+
+
+            <div class="button-group">
+              <button type="button" class="btn btn-neon" onclick="startAttCamera('attVideo')" <i
+                class="fas fa-video"></i> Start Camera
+              </button>
+              <button type="button" class="btn btn-primary" onclick="captureAttFrame('attVideo','attCanvas')" <i
+                class="fas fa-camera"></i> Capture Face
+              </button>
+              <button type="submit" class="btn btn-primary floating">
+                <i class="fas fa-paper-plane"></i> Submit Attendance
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;text-align:center;">
+            <small>Date & Time will be saved by server on Attendance.</small>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Info Cards Section (Form functionality explanation) -->
+  <!-- <section class="info-section">
+    <div class="container">
+      <h2>How Registration Works</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-video"></i></div>
+          <h3>Live Camera</h3>
+          <p>Capture real-time video frames directly from browser for marking attendance.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-user-check"></i></div>
+          <h3>Face Matching</h3>
+          <p>Advanced recognition ensures every attendance is validated securely.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-database"></i></div>
+          <h3>Instant Record</h3>
+          <p>Your attendance gets stored instantly in the database with accuracy.</p>
+        </div>
+      </div>
+
+    </div>
+  </section> -->
+
+  <!-- Info Cards Section (Form functionality explanation) -->
+  <section class="info-section">
+    <div class="container">
+      <h2>How Attendance Works</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-id-card"></i>
+          </div>
+          <h3>Step 1: Enter User ID</h3>
+          <p>Provide your unique User ID . These details are mapped with your facial data.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-video"></i>
+          </div>
+          <h3>Step 2: Live Camera</h3>
+          <p>Capture real-time video frames directly from browser for marking attendance.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-user-check"></i>
+          </div>
+          <h3>Step 3: Face Matching</h3>
+          <p>Advanced recognition ensures every attendance is validated securely.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-database"></i>
+          </div>
+          <h3>Step 4: Instant Record</h3>
+          <p>Your attendance gets stored instantly in the database with accuracy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Footer (same as Home) -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>FaceAttend</h3>
+          <p>Revolutionizing attendance management with cutting-edge facial recognition technology.</p>
+          <div class="social-links1">
+            <a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.linkedin.com/in/sahil1506" class="linkedin"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="instagram"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="#registration">Registration</a></li>
+            <li><a href="{% url 'attendance' %}">Attendance</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3>System Links</h3>
+          <ul class="footer-links">
+            <li><a href="{% url 'registration' %}">Registration</a></li>
+            <li><a href="{% url 'attendance' %}">Attendance</a></li>
+            <li><a href="{% url 'download_attendance' %}">Download attendance</a></li>
+            <li><a href="/admin/">Admin Login</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3>Contact Info</h3>
+          <ul class="footer-links">
+            <li><i class="fas fa-map-marker-alt"></i> Shyamla Hills Bhopal Madhya Pradesh</li>
+            <li><i class="fas fa-phone-alt"></i> +91 9301922675</li>
+            <li><i class="fas fa-envelope"></i> 0173cs221113@gmail.com</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="copyright">
+        <p>&copy; 2025 Facial Recognition Attendance System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Menu Toggle
+    document.querySelector(".mobile-menu").addEventListener("click", function () {
+      document.querySelector("nav ul").classList.toggle("active");
+    });
+
+    // Close mobile menu when clicking on a link
+    document.querySelectorAll("nav a").forEach((link) => {
+      link.addEventListener("click", function () {
+        document.querySelector("nav ul").classList.remove("active");
+      });
+    });
+
+    function getCookie(name) {
+      let cookie = null;
+      if(document.cookie) {
+        const cookies = document.cookie.split(";");
+        for(let c of cookies) {
+          c = c.trim();
+          if(c.startsWith(name + "=")) {
+            cookie = decodeURIComponent(c.substring(name.length + 1));
+          }
+        }
+      }
+      return cookie;
+    }
+
+    let attStream = null;
+    let attBlob = null;
+
+    function startAttCamera(videoId) {
+      const video = document.getElementById(videoId);
+      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Camera API not supported in your browser");
+        return;
+      }
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          attStream = stream;
+          video.srcObject = stream;
+          video.play();
+        })
+        .catch((err) => {
+          console.error("Camera Error:", err);
+          alert("Unable to access camera: " + err.message);
+        });
+    }
+
+    function captureAttFrame(videoId, canvasId) {
+      const video = document.getElementById(videoId);
+      const canvas = document.getElementById(canvasId);
+
+      if(!video.videoWidth || !video.videoHeight) {
+        alert("Please start the camera first");
+        return;
+      }
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      canvas.getContext("2d").drawImage(video, 0, 0);
+
+      canvas.toBlob(
+        (blob) => {
+          attBlob = blob;
+          alert("Face Captured Successfully!");
+          if(attStream) {
+            attStream.getTracks().forEach((t) => t.stop());
+            attStream = null;
+          }
+        },
+        "image/jpeg",
+        0.9
+      );
+    }
+
+    function submitAttendance(formId) {
+      const form = document.getElementById(formId);
+      const userid = form.userid.value.trim();
+
+      if(!userid) {
+        alert("Please enter your User ID");
+        return;
+      }
+      if(!attBlob) {
+        alert("Please capture your face first");
+        return;
+      }
+
+      const fd = new FormData();
+      fd.append("userid", userid);
+      fd.append("captured_image", attBlob, "attendance.jpg");
+
+      fetch("/attendance/submit/", {
+        method: "POST",
+        body: fd,
+        headers: { "X-CSRFToken": getCookie("csrftoken") },
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if(data.status === "success") {
+            alert(data.message || "Attendance marked successfully!");
+            // Reset form
+            form.reset();
+            attBlob = null;
+          } else {
+            alert(data.message || "Attendance submission failed");
+          }
+        })
+        .catch(() => alert("Failed to submit attendance. Please try again."));
+    }
+
+  </script>
+
+</body>
+
+</html>
