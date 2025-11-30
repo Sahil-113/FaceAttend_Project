@@ -54,4 +54,4 @@ This project is licensed under the MIT License.
 
 ---
 
-Feel free to personalize this README with your project’s specific details!
+
